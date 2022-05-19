@@ -1,43 +1,44 @@
 #!/bin/bash
 
 echo -e  '--------------------BEGIN TEST 1-----------------------\n'
-read -s -p "Please input your location: " x
-echo "All .sh files in $x are: "
-find $x -name "*.sh" > output.txt
+echo "All .sh files in $1 are: "
+find $1 -name "*.sh" > output.txt
 awk '{print NR,$0}' output.txt
 echo -e  '--------------------END TEST 1------------------------\n'
 
 echo -e  '--------------------BEGIN TEST 2-----------------------\n'
-read -e -s -p "Please input the file's index that you want to replace: " x
+echo -e "The file's index that you want to replace: $2"
 echo -e  '\n------------------'
-read -e -s -p "Please input the string you find: " old
+echo -e "The string you find: $3"
 echo -e  '\n------------------'
-read -e -s -p "Please input the string you replace: " new
+echo -e "The string you replace: $4" 
 echo -e  '\n------------------'
 
-if [[ $new  == *"\\"* ]]; then
-	echo $new > new.txt
-	new=$(awk '{gsub ("\\","\\\\\\")} 1' new.txt)
+a=$3
+b=$4
+echo "The new file after replacing character $a by $b in the file index $2 having been found"
+
+if [[ $4  == *"\\"* ]]; then
+	echo $4 > new.txt
+	b=$(awk '{gsub ("\\","\\\\\\")} 1' new.txt)
 fi
 
-if [[ $old  == *"\\"* ]]; then
-	echo $old > old.txt
-        old=$(awk '{gsub ("\\","\\\\\\")} 1' old.txt)
+if [[ $3  == *"\\"* ]]; then
+	echo $3 > old.txt
+        a=$(awk '{gsub ("\\","\\\\\\")} 1' old.txt)
 fi
-if [[ $old  == *"."* ]]; then
-        echo $old > old.txt
-        old=$(awk '{gsub ("\.","\\\.")} 1' old.txt)
+if [[ $3  == *"."* ]]; then
+        echo $3 > old.txt
+        a=$(awk '{gsub ("\.","\\\.")} 1' old.txt)
 fi
 
-echo "Replace character $old by $new in the file index $x having been found"
-awk -v a=$old -v b=$new '{gsub (a, b)} 1' $(awk "NR==$x" output.txt) > newfile.txt
+awk -v a=$a -v b=$b '{gsub (a, b)} 1' $(awk "NR==$2" output.txt) > newfile.txt
 cat newfile.txt
 echo -e  '--------------------END TEST 2------------------------\n'
  
 echo -e  '--------------------BEGIN TEST 3-----------------------\n'
-read -s -p "Please input port number: " x
-echo "The port number is - $x"
-sudo lsof -i :$x >output.txt
+echo -e "The port number is - $5"
+lsof -i :$5 >output.txt
 echo "The service running is: $(awk 'NR==2 {print $1}' output.txt)"
 echo -e  '--------------------END TEST 3-----------------------\n'
 
